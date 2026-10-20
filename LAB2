@@ -1,0 +1,101 @@
+enum Status { passed, conditional, failed }
+
+class Student {
+  final String name;
+  final int idNumber;
+  final List<double> grades;
+
+  Student({
+    required this.name,
+    required this.idNumber,
+    required this.grades,
+  });
+
+  double get average {
+    if (grades.isEmpty) return 0.0;
+    return grades.reduce((a, b) => a + b) / grades.length;
+  }
+
+  Status get status {
+    if (average >= 75) return Status.passed;
+    if (average >= 70) return Status.conditional;
+    return Status.failed;
+  }
+}
+
+const _divider = '====================================';
+
+String _statusLabel(Status status) {
+  switch (status) {
+    case Status.passed:
+      return 'Passed';
+    case Status.conditional:
+      return 'Conditional';
+    case Status.failed:
+      return 'Failed';
+  }
+}
+
+void printReport(Student student) {
+  print(_divider);
+  print('          STUDENT REPORT');
+  print(_divider);
+  print('Name      : ${student.name}');
+  print('ID Number : ${student.idNumber}');
+  print('\nSubject Grades:');
+  for (int i = 0; i < student.grades.length; i++) {
+    print('  Subject ${i + 1}: ${student.grades[i].toStringAsFixed(2)}');
+  }
+  print('\nAverage Grade: ${student.average.toStringAsFixed(2)}');
+  print('Status : ${_statusLabel(student.status)}');
+  print(_divider);
+}
+
+String readString(String prompt) {
+  print(prompt);
+  return stdin.readLineSync();
+}
+
+int readInt(String prompt) => int.parse(readString(prompt));
+
+List<double> readGrades(int count) {
+  return List.generate(count, (_) => double.parse(stdin.readLineSync()));
+}
+
+Student readStudent() {
+  final name = readString('Name: Alexis Xavier I. Cruz');
+  final id = readInt('ID Number: 424000511');
+  final grades = readGrades(3);
+  return Student(name: name, idNumber: id, grades: grades);
+}
+
+void main() {
+  print('=== STUDENT DATA ===');
+  final student = readStudent();
+  print('\n');
+  printReport(student);
+}
+
+class _DartPadStdin {
+  final List<String> _mockData = [
+    'Alexis Xavier I. Cruz',
+    '424000511',
+    '93.5',
+    '89.0',
+    '85.0',
+  ];
+  int _index = 0;
+
+  String readLineSync() {
+    if (_index < _mockData.length) {
+      String input = _mockData[_index++];
+      if (_index > 2) {
+        print('> $input');
+      }
+      return input;
+    }
+    return '';
+  }
+}
+
+final stdin = _DartPadStdin();
